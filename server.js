@@ -74,6 +74,7 @@ getNews = async () => {
             console.log("\n\nScraping done!");
             
             console.log("\nSaving..");
+            console.log(news);
 
             await (async() =>{
                 let csv = new ObjectsToCsv(news);

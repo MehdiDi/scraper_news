@@ -16,7 +16,7 @@ function techxplore() {
         url: el => el.find('h2>a').attr('href'),
         image: el => el.find('figure img').attr('src'),
         category: el => el.find('figcaption p').text(),
-        loadMore: {clickToLoad: async page => pagination.clickToLoad(page, "//a[contains(text(), 'More News')]", 1000)},
+        loadMore: {clickToLoad: async page => await pagination.clickToLoad(page, "//a[contains(text(), 'More News')]", 1000)},
         paginationType: LINK,
         date: el => {
             const res = el.find('.article__info-item p').text().replace(/\t\n/g, '');
@@ -83,7 +83,7 @@ function eetimes(){
     this.pageIndex = 2;
 
     this.get = {
-        items: '.layout-three .block',
+        items: '.block .card.-horizontal',
         title: el => el.find('.article-links').text(),
 
         url: el =>  {
@@ -96,7 +96,8 @@ function eetimes(){
             paging: async page =>  {
                 await pagination.paging(
                     page,
-                    'https://www.eetimes.com' + this.paginationLink + this.pageIndex
+                    'https://www.eetimes.com' + this.paginationLink + this.pageIndex,
+                    1500
                 )
                 this.pageIndex++;
             }

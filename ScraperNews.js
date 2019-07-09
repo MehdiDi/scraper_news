@@ -21,6 +21,8 @@ const extractArticleContent = async (page, news, setNewsContents) => {
     let item;
     for(let i in news){
         item = news[i];
+        if(!item.url)
+            continue;
         await page.goto(item.url);
         content = await page.evaluate(() => document.body.innerHTML);
         $ = cheerio.load(content);
@@ -57,23 +59,37 @@ const getNews = async (url, get, newsLimit=999) => {
     let news = [];
     let moreExists = true;
     let offset = 0;
+    let offsetChanged = false;
     const twoPaginationMethods = Object.keys(get.loadMore).length > 1;
+    let sliced_news_items;
+
     let paginationType = get.paginationType;
     do {
         content = await page.evaluate(() => document.body.innerHTML);
         $ = cheerio.load(content);
         news_items = $(get.items);
-
-        if(paginationType === LINK || paginationType === SCROLL) {
-            news_items = news_items.slice(offset);
+        
+        if((paginationType === LINK || paginationType === SCROLL)) {
+            if(offsetChanged) {
+                sliced_news_items = news_items.slice(offset);
+            }
+            else {
+                sliced_news_items = news_items;
+                offsetChanged = true;
+            }
+            offset = news_items.length;
         }
-        const length = news.length + news_items.length;
+        if(paginationType === PAGE)
+            sliced_news_items = news_items;
+            
+        
+        const length = news.length + sliced_news_items.length;
         if( length > newsLimit) {
             const diff = length - newsLimit;
-            news_items.splice(news_items.length - diff, diff);
+            sliced_news_items.splice(sliced_news_items.length - diff, diff);
         }
-        news = news.concat(extractBasicData(news_items, get, $));
-        offset = news_items.length;
+        news = news.concat(extractBasicData(sliced_news_items, get, $));
+        
         if(paginationType === SCROLL){
             try{
                 await get.loadMore.endlessScroll(page);

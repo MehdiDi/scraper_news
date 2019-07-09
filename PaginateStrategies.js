@@ -2,8 +2,10 @@ const LINK = 'LINK';
 const SCROLL = 'SCROLL';
 const PAGE = 'PAGE';
 
-const paging = async (page, nextPage) => {
-    await page.goto(nextPage);
+const paging = async (page, nextPage, waitTime) => {
+    await page.goto(nextPage, {waitUntil: 'networkidle0'});
+    await page.waitFor(waitTime);
+
 }
 
 const clickToLoad = async (page, selector, waitSeconds) => {
