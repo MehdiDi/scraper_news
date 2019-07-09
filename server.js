@@ -22,16 +22,15 @@ getNews = async () => {
     let numberOfItems;
 
     do {
-    
-        console.log("Choose website to scrape: \n\n");
+        console.log("\n\nChoose website to scrape: \n\n");
         console.log("1- techxplore.com");
         console.log("2- electronicsforu.com/category/technology-trends/tech-focus");
         console.log("3- iot.eetimes.com/category/technology-trends");
         console.log("4- eetimes.com/archives.asp?section_type=News+Analysis");
         console.log("5- sciencex.com/news");
-        console.log("0- To quit ");
+        console.log("0- To quit \n");
 
-        input = await readInput('');
+        input = await readInput('Your choice: ');
         switch(input) {
             case "1":
                 scraper = new sourcesData.techxplore();
@@ -55,7 +54,7 @@ getNews = async () => {
         }
 
         if(input !== "0" && scraper !== null) {
-            numberOfItems = await readInput("\nNumber of news to scrape: ");
+            numberOfItems = await readInput("\nNumber of rows: ");
             if(isNaN(numberOfItems)) {
                 console.log("Please provide a valid number");
                 continue;
