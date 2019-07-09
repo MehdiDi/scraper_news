@@ -102,7 +102,13 @@ const getNews = async (url, get, newsLimit=999) => {
             }
         }
         else if(paginationType === LINK) {
-            moreExists = await get.loadMore.clickToLoad(page);
+            try{
+                moreExists = await get.loadMore.clickToLoad(page);
+
+            }
+            catch(err) {
+                moreExists = false;
+            }
         }
         else if(paginationType === PAGE) {
             await get.loadMore.paging(page);
