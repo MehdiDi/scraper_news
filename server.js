@@ -78,7 +78,7 @@ getNews = async () => {
 
             await (async() =>{
                 let csv = new ObjectsToCsv(news);
-                const filename = scraper.url.replace(/\//g, '').split(':')[1] + new Date() + ".csv";
+                const filename = scraper.url.replace(/\//g, '').split(':')[1] + "|" + new Date() + ".csv";
                 
                 await csv.toDisk("./exports/" + filename);
                 
