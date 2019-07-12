@@ -9,7 +9,7 @@ function readInput(text) {
         input: process.stdin,
         output: process.stdout,
     });
-
+    
     return new Promise(resolve => rl.question(text, ans => {
         rl.close();
         resolve(ans);
@@ -20,7 +20,7 @@ getNews = async () => {
     let input = "";
     let scraper = null;
     let numberOfItems;
-
+    
     do {
         console.log("\n\nChoose website to scrape: \n\n");
         console.log("1- techxplore.com");
@@ -28,6 +28,11 @@ getNews = async () => {
         console.log("3- iot.eetimes.com/category/technology-trends");
         console.log("4- eetimes.com/archives.asp?section_type=News+Analysis");
         console.log("5- sciencex.com/news");
+        console.log("6- designnews.com/all-content");
+        console.log("7- electronicspecifier.com/robotics");
+        console.log("8- manufacturingglobal.com/topics");
+        console.log("9- automationmag.com/products/sensors.html");
+        console.log("10- themanufacturer.com/channel/industrial-automation");
         console.log("0- To quit \n");
 
         input = await readInput('Your choice: ');
@@ -47,10 +52,27 @@ getNews = async () => {
             case "5":
                 scraper = new sourcesData.sciencex();
                     break;
+            case "6":
+                scraper = new sourcesData.designnews();
+                    break;
+            case "7":
+                scraper = new sourcesData.electronicspecifier()
+                    break;                    
+            case "8":
+                scraper = new sourcesData.manufacturingglobal()
+                    break;
+            case "9":
+                scraper = new sourcesData.automationmag()
+                    break;
+            case "10":
+                scraper = new sourcesData.themanufacturer()
+                    break;
             case "0":
                 console.log("\nGoodbye!\n\n");
                 scraper = null;
                 return;
+            default: 
+                console.log("\n\nInvalid input.\n\n")
         }
 
         if(input !== "0" && scraper !== null) {
@@ -62,7 +84,7 @@ getNews = async () => {
             numberOfItems = parseInt(numberOfItems);
     
             if(numberOfItems <=0) {
-                console.log("Invalid number of news");
+                console.log("\n\nInvalid number of news\n\n");
                 continue;
             }
 
@@ -87,7 +109,5 @@ getNews = async () => {
         }
         
     }while(input !== "0")
-    
-    console.log(news);
 }
 getNews();

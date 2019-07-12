@@ -10,9 +10,13 @@ const extractBasicData = (news_items, get, $) => {
             url: get.url($(this)),
             image: get.image($(this)),
             category: get.category($(this)),
-            date: get.date($(this))
+            date: get.date($(this)),
+            content: get.content($(this)),
         });
     });
+    if(get.containsAllInfosInList)
+        console.log(news);
+    
     return news;
 }
 
@@ -32,7 +36,7 @@ const extractArticleContent = async (page, news, setNewsContents) => {
 }
 
 const getNews = async (url, get, newsLimit=999) => {
-    console.log(`\n\nScraping news from: '${url}' it might take a few seconds to minutes.`);
+    console.log(`\n\nScraping news from: '${url}' it might take a few seconds to minutes.\n\n`);
 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -113,10 +117,9 @@ const getNews = async (url, get, newsLimit=999) => {
         else if(paginationType === PAGE) {
             await get.loadMore.paging(page);
         }
-        
     } while(moreExists && news.length < newsLimit);
-    
-    await extractArticleContent(page, news, get.processContent)
+    if(!get.containsAllInfosInList)
+        await extractArticleContent(page, news, get.processContent)
 
     await browser.close();
     return news;
