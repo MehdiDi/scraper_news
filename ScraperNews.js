@@ -40,7 +40,7 @@ const extractArticleContent = async (page, news, setNewsContents) => {
 const getNews = async (url, get, newsLimit=999, rowsOffset=0) => {
     console.log(`\n\nScraping news from: '${url}' it might take a few seconds to minutes.\n\n`);
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
     await page.setViewport({
@@ -50,7 +50,7 @@ const getNews = async (url, get, newsLimit=999, rowsOffset=0) => {
     await page.setRequestInterception(true);
     
     page.on('request', (req) => {
-        if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image'){
+        if((req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image') && !get.allowStyle){
             req.abort();
         }
         else {
@@ -64,38 +64,45 @@ const getNews = async (url, get, newsLimit=999, rowsOffset=0) => {
     let news_items;
     let news = [];
     let moreExists = true;
-    let offsetChanged = false;
     const twoPaginationMethods = Object.keys(get.loadMore).length > 1;
     let sliced_news_items;
     let offset = rowsOffset;
     let paginationType = get.paginationType;
-    let loadedItemsCounter = 0;
+
+    if(get.closeAdd) {
+        await get.closeAdd(page);
+    }
+
     do {
         content = await page.evaluate(() => document.body.innerHTML);
         $ = cheerio.load(content);
         news_items = $(get.items);
         
         if((paginationType === LINK || paginationType === SCROLL)) {
-            if(offsetChanged) {
-                sliced_news_items = news_items.slice(offset);
-                
+            sliced_news_items = news_items.slice(offset);
+            
+            offset = news_items.length > rowsOffset ? news_items : rowsOffset;
+        }
+        if(paginationType === PAGE){
+            if(rowsOffset !== 0) {
+                sliced_news_items = news_items.slice(rowsOffset);
+                if(rowsOffset <= news_items.length){
+                    rowsOffset = 0;
+                }
+                else {
+                    rowsOffset -= news_items.length;
+                }
             }
             else {
                 sliced_news_items = news_items;
-                offsetChanged = true;
             }
-            offset = news_items.length;
         }
-        if(paginationType === PAGE)
-            sliced_news_items = news_items;
-        
+
         const length = news.length + sliced_news_items.length;
         if( length > newsLimit) {
             const diff = length - newsLimit;
             sliced_news_items.splice(sliced_news_items.length - diff, diff);
         }
-        
-        loadedItemsCounter += sliced_news_items.length;
 
         news = news.concat(extractBasicData(sliced_news_items, get, $));
 

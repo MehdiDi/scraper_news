@@ -55,7 +55,15 @@ function electronicsforu(){
             newsItem.date = $('header.td-post-title time.entry-date').text();
             console.log(newsItem);
         },
-        onPaginationSwitch: async page => await page.click('#pe_close_btn')
+        onPaginationSwitch: async page =>{
+            try{
+
+                await page.click('#pe_close_btn')   
+            }catch(ex) {
+                console.log("No Ads");
+            }
+        },
+        allowStyle: true
           
     }
 }
@@ -111,6 +119,7 @@ function eetimes(){
         category: el => null,
         content: el => null,
         date: el => el.find('span.card-date').text(),
+        closeAdd: async page => await page.click("#WelcomeAdCloseButton"),
         processContent: (newsItem, $) => {
             newsItem.category = $('.articleBadge-category').text();
             newsItem.content = $('.articleBody>p, .articleBody>p>em, .articleBody>p>h3>, .articleBody>p>strong,'
