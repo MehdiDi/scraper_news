@@ -30,13 +30,8 @@ function techxplore() {
     
             return date;  
         },
-        content: el => null,
-        processContent: (newsItem, $) => {
-            newsItem.content = $('.article-main>p:not([class]), .article-main>p[class=""]>strong, '
-            +'.article-main>ul>li, .article-main>p:not([class])>em, .article-main>p[class=""]>b').text().replace(/(\t|\n)/g, '');
-            
-            console.log(newsItem);
-        }
+        content: el => el.find("p.mb-4").text().replace(/(\t|\n)/g, ''),
+        containsAllInfosInList: true,
     }
 }
 function electronicsforu(){
@@ -50,8 +45,8 @@ function electronicsforu(){
         category: el => el.find('.td-post-category').text(),
         paginationType: SCROLL,
         loadMore: {
-            clickToLoad: async page => pagination.clickToLoad(page, "//a[contains(@class, 'td_ajax_load_more')]", 3000),
-            endlessScroll: async page => pagination.endlessScroll(page, 4000)
+            clickToLoad: async page => await pagination.clickToLoad(page, "//a[contains(@class, 'td_ajax_load_more')]", 3000),
+            endlessScroll: async page => await pagination.endlessScroll(page, 4000)
         },
         date: el => null,
         content: el => null,
@@ -59,7 +54,9 @@ function electronicsforu(){
             newsItem.content = $('.td-post-content>p, .article-main>p>em').text().replace(/(\t|\n)/g, '');
             newsItem.date = $('header.td-post-title time.entry-date').text();
             console.log(newsItem);
-        }
+        },
+        onPaginationSwitch: async page => await page.click('#pe_close_btn')
+          
     }
 }
 function ioeetimes(){

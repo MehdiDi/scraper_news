@@ -12,7 +12,7 @@ const clickToLoad = async (page, selector, waitSeconds) => {
     const linkHandlers = await page.$x(selector);
 
     if (linkHandlers.length === 0)
-        return false;
+    return false;
     
     await linkHandlers[0].click();
     await page.waitFor(waitSeconds);

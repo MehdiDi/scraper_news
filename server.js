@@ -41,7 +41,7 @@ getNews = async () => {
                 scraper = new sourcesData.techxplore();
                 break;
             case "2":
-                scraper = new sourcesData.ioeetimes();
+                scraper = new sourcesData.electronicsforu();
                 break;
             case "3":
                 scraper = new sourcesData.ioeetimes();
@@ -87,11 +87,18 @@ getNews = async () => {
                 console.log("\n\nInvalid number of news\n\n");
                 continue;
             }
+            let offset = await readInput("Offset: ")
+            
+            while(isNaN(offset)){
+                offset = await readInput("Please enter a valid offset number.");
+            }
+            offset = parseInt(offset);
 
             const news = await scrapeNews(
                 scraper.url,
                 scraper.get,
-                numberOfItems
+                numberOfItems,
+                offset
             );
             console.log("\n\nScraping done!");
             
