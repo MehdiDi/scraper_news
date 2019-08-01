@@ -59,6 +59,9 @@ const getNews = async (url, get, newsLimit=999, rowsOffset=0) => {
     });
     await page.goto(url);
     
+    if(get.awaitDDOSCheck) {
+        await page.waitFor(8000);
+    }
     let content;
     let $;
     let news_items;

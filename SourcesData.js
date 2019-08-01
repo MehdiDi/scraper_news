@@ -63,8 +63,8 @@ function electronicsforu(){
                 console.log("No Ads");
             }
         },
-        allowStyle: true
-          
+        allowStyle: true,
+        awaitDDOSCheck: true
     }
 }
 function ioeetimes(){
